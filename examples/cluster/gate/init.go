@@ -1,6 +1,6 @@
 package gate
 
-import "github.com/lonng/nano/component"
+import "github.com/seanbit/nano/component"
 
 var (
 	// All services in master server

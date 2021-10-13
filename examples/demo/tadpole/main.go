@@ -5,10 +5,10 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/lonng/nano"
-	"github.com/lonng/nano/component"
-	"github.com/lonng/nano/examples/demo/tadpole/logic"
-	"github.com/lonng/nano/serialize/json"
+	"github.com/seanbit/nano"
+	"github.com/seanbit/nano/component"
+	"github.com/seanbit/nano/examples/demo/tadpole/logic"
+	"github.com/seanbit/nano/serialize/json"
 	"github.com/urfave/cli"
 )
 

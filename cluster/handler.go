@@ -33,16 +33,16 @@ import (
 	"time"
 
 	"github.com/gorilla/websocket"
-	"github.com/lonng/nano/cluster/clusterpb"
-	"github.com/lonng/nano/component"
-	"github.com/lonng/nano/internal/codec"
-	"github.com/lonng/nano/internal/env"
-	"github.com/lonng/nano/internal/log"
-	"github.com/lonng/nano/internal/message"
-	"github.com/lonng/nano/internal/packet"
-	"github.com/lonng/nano/pipeline"
-	"github.com/lonng/nano/scheduler"
-	"github.com/lonng/nano/session"
+	"github.com/seanbit/nano/cluster/clusterpb"
+	"github.com/seanbit/nano/component"
+	"github.com/seanbit/nano/internal/codec"
+	"github.com/seanbit/nano/internal/env"
+	"github.com/seanbit/nano/internal/log"
+	"github.com/seanbit/nano/internal/message"
+	"github.com/seanbit/nano/internal/packet"
+	"github.com/seanbit/nano/pipeline"
+	"github.com/seanbit/nano/scheduler"
+	"github.com/seanbit/nano/session"
 )
 
 var (

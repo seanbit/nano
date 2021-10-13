@@ -3,9 +3,9 @@ package logic
 import (
 	"log"
 
-	"github.com/lonng/nano/component"
-	"github.com/lonng/nano/examples/demo/tadpole/logic/protocol"
-	"github.com/lonng/nano/session"
+	"github.com/seanbit/nano/component"
+	"github.com/seanbit/nano/examples/demo/tadpole/logic/protocol"
+	"github.com/seanbit/nano/session"
 )
 
 // Manager component

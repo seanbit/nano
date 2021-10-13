@@ -4,12 +4,12 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/lonng/nano/benchmark/io"
-	"github.com/lonng/nano/benchmark/testdata"
-	"github.com/lonng/nano/cluster"
-	"github.com/lonng/nano/component"
-	"github.com/lonng/nano/scheduler"
-	"github.com/lonng/nano/session"
+	"github.com/seanbit/nano/benchmark/io"
+	"github.com/seanbit/nano/benchmark/testdata"
+	"github.com/seanbit/nano/cluster"
+	"github.com/seanbit/nano/component"
+	"github.com/seanbit/nano/scheduler"
+	"github.com/seanbit/nano/session"
 	. "github.com/pingcap/check"
 )
 
