@@ -54,7 +54,13 @@ func (c *cluster) Register(_ context.Context, req *clusterpb.RegisterRequest) (*
 	resp := &clusterpb.RegisterResponse{}
 	for _, m := range c.members {
 		if m.memberInfo.ServiceAddr == req.MemberInfo.ServiceAddr {
-			return nil, fmt.Errorf("address %s has registered", req.MemberInfo.ServiceAddr)
+			//return nil, fmt.Errorf("address %s has registered", req.MemberInfo.ServiceAddr)
+			for _, m := range c.members {
+				if m.memberInfo.ServiceAddr != req.MemberInfo.ServiceAddr {
+					resp.Members = append(resp.Members, m.memberInfo)
+				}
+			}
+			return resp, nil
 		}
 	}
 
