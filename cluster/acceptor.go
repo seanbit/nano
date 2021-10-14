@@ -2,18 +2,20 @@ package cluster
 
 import (
 	"context"
-	"net"
-
 	"github.com/seanbit/nano/cluster/clusterpb"
+	"github.com/seanbit/nano/internal/log"
 	"github.com/seanbit/nano/internal/message"
 	"github.com/seanbit/nano/mock"
+	"github.com/seanbit/nano/pipeline"
 	"github.com/seanbit/nano/session"
+	"net"
 )
 
 type acceptor struct {
 	sid        int64
 	gateClient clusterpb.MemberClient
 	session    *session.Session
+	pipeline   pipeline.Pipeline // add by sean
 	lastMid    uint64
 	rpcHandler rpcHandler
 	gateAddr   string
@@ -46,6 +48,14 @@ func (a *acceptor) RPC(route string, v interface{}) error {
 		Type:  message.Notify,
 		Route: route,
 		Data:  data,
+	}
+	// add pipeline process by sean
+	if pipe := a.pipeline; pipe != nil {
+		err := pipe.Outbound().Process(a.session, msg)
+		if err != nil {
+			log.Println("broken pipeline", err.Error())
+			return err
+		}
 	}
 	a.rpcHandler(a.session, msg, true)
 	return nil

@@ -152,6 +152,14 @@ func (a *agent) RPC(route string, v interface{}) error {
 		Route: route,
 		Data:  data,
 	}
+	// add pipeline process by sean
+	if pipe := a.pipeline; pipe != nil {
+		err := pipe.Outbound().Process(a.session, msg)
+		if err != nil {
+			log.Println("broken pipeline", err.Error())
+			return err
+		}
+	}
 	a.rpcHandler(a.session, msg, true)
 	return nil
 }
