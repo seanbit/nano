@@ -11,7 +11,7 @@ type (
 	// Message is the alias of `message.Message`
 	Message = message.Message
 
-	Func func(s *session.Session, msg *message.Message) error
+	Func func(s *session.Session, msg *Message) error
 
 	Pipeline interface {
 		Outbound() Channel
