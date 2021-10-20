@@ -22,6 +22,7 @@ package log
 
 import (
 	"github.com/sirupsen/logrus"
+	"runtime"
 )
 
 // Logger represents  the log interface
@@ -30,23 +31,7 @@ type Logger interface {
 	//Fatal(v ...interface{})
 	//Fatalf(format string, v ...interface{})
 
-	Debugf(format string, args ...interface{})
-	Infof(format string, args ...interface{})
-	Printf(format string, args ...interface{})
-	Errorf(format string, args ...interface{})
-	Fatalf(format string, args ...interface{})
-
-	Debug(args ...interface{})
-	Info(args ...interface{})
-	Print(args ...interface{})
-	Error(args ...interface{})
-	Fatal(args ...interface{})
-
-	Debugln(args ...interface{})
-	Infoln(args ...interface{})
-	Println(args ...interface{})
-	Errorln(args ...interface{})
-	Fatalln(args ...interface{})
+	logrus.FieldLogger
 }
 
 func init() {
@@ -57,6 +42,9 @@ var (
 	//Println func(v ...interface{})
 	//Fatal   func(v ...interface{})
 	//Fatalf  func(format string, v ...interface{})
+
+	WithCaller func() Logger
+
 
 	Debugf func(format string, args ...interface{})
 	Infof func(format string, args ...interface{})
@@ -86,6 +74,10 @@ func SetLogger(logger Logger) {
 	//Fatal = logger.Fatal
 	//Fatalf = logger.Fatalf
 
+	WithCaller = func() Logger {
+		return logger.WithField("caller", caller())
+	}
+
 	Debugf = logger.Debugf
 	Infof = logger.Infof
 	Printf = logger.Printf
@@ -103,4 +95,13 @@ func SetLogger(logger Logger) {
 	Println = logger.Println
 	Errorln = logger.Errorln
 	Fatalln = logger.Fatalln
+}
+
+func caller() string {
+	pc, _, _, ok := runtime.Caller(3)
+	if ok {
+		return runtime.FuncForPC(pc).Name()
+	} else {
+		return ""
+	}
 }

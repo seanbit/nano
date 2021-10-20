@@ -86,7 +86,7 @@ func (s *Session) Router() *Router {
 // RPC sends message to remote server
 func (s *Session) RPC(route string, v interface{}) error {
 	if err := s.entity.RPC(route, v); err != nil {
-		log.Error(err)
+		log.WithCaller().Error(err)
 		return err
 	}
 	return nil
@@ -105,7 +105,7 @@ func (s *Session) RPCToMore(routes []string, v interface{}) error {
 // Push message to client
 func (s *Session) Push(route string, v interface{}) error {
 	if err := s.entity.Push(route, v); err != nil {
-		log.Error(err)
+		log.WithCaller().Error(err)
 		return err
 	}
 	return nil
@@ -114,7 +114,7 @@ func (s *Session) Push(route string, v interface{}) error {
 // Response message to client
 func (s *Session) Response(v interface{}) error {
 	if err := s.entity.Response(v); err != nil {
-		log.Error(err)
+		log.WithCaller().Error(err)
 		return err
 	}
 	return nil
@@ -124,7 +124,7 @@ func (s *Session) Response(v interface{}) error {
 // request message ID
 func (s *Session) ResponseMID(mid uint64, v interface{}) error {
 	if err := s.entity.ResponseMid(mid, v); err != nil {
-		log.Error(err)
+		log.WithCaller().Error(err)
 		return err
 	}
 	return nil
