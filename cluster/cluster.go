@@ -22,7 +22,6 @@ package cluster
 
 import (
 	"context"
-	"fmt"
 	"sync"
 
 	"github.com/seanbit/nano/cluster/clusterpb"
@@ -82,7 +81,7 @@ func (c *cluster) Register(_ context.Context, req *clusterpb.RegisterRequest) (*
 		}
 	}
 
-	log.Println("New peer register to cluster", req.MemberInfo.ServiceAddr)
+	log.Infoln("New peer register to cluster", req.MemberInfo.ServiceAddr)
 
 	// Register services to current node
 	c.currentNode.handler.addRemoteService(req.MemberInfo)
@@ -107,13 +106,17 @@ func (c *cluster) Unregister(_ context.Context, req *clusterpb.UnregisterRequest
 		}
 	}
 	if index < 0 {
-		return nil, fmt.Errorf("address %s has  notregistered", req.ServiceAddr)
+		return nil, nil
+		//return nil, fmt.Errorf("address %s has  notregistered", req.ServiceAddr)
 	}
 
 	// Notify registered node to update remote services
 	delMember := &clusterpb.DelMemberRequest{ServiceAddr: req.ServiceAddr}
 	for _, m := range c.members {
 		if m.MemberInfo().ServiceAddr == c.currentNode.ServiceAddr {
+			continue
+		}
+		if m.MemberInfo().ServiceAddr == req.ServiceAddr {
 			continue
 		}
 		pool, err := c.rpcClient.getConnPool(m.memberInfo.ServiceAddr)
@@ -127,7 +130,7 @@ func (c *cluster) Unregister(_ context.Context, req *clusterpb.UnregisterRequest
 		}
 	}
 
-	log.Println("Exists peer unregister to cluster", req.ServiceAddr)
+	log.Infoln("Exists peer unregister to cluster", req.ServiceAddr)
 
 	// Register services to current node
 	c.currentNode.handler.delMember(req.ServiceAddr)
@@ -196,4 +199,11 @@ func (c *cluster) delMember(addr string) {
 		c.members = append(c.members[:index], c.members[index+1:]...)
 	}
 	c.mu.Unlock()
+}
+
+// 定时监测成员live状态，每10秒1次，达到5次（1min）失联，unregister
+func (c *cluster) liveMonitoring() {
+	//go func() {
+	//
+	//}()
 }

@@ -362,7 +362,7 @@ func (h *LocalHandler) remoteProcess(session *session.Session, msg *message.Mess
 		_, err = client.HandleNotify(context.Background(), request)
 	}
 	if err != nil {
-		log.Println(fmt.Sprintf("Process remote message (%d:%s) error: %+v", msg.ID, msg.Route, err))
+		log.Errorf("Process remote message (%d:%s) error: %+v", msg.ID, msg.Route, err)
 	}
 }
 
@@ -374,7 +374,7 @@ func (h *LocalHandler) processMessage(agent *agent, msg *message.Message) {
 	case message.Notify:
 		lastMid = 0
 	default:
-		log.Println("Invalid message type: " + msg.Type.String())
+		log.Infoln("Invalid message type: " + msg.Type.String())
 		return
 	}
 

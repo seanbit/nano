@@ -22,6 +22,7 @@ package session
 
 import (
 	"errors"
+	"github.com/seanbit/nano/internal/log"
 	"net"
 	"sync"
 	"sync/atomic"
@@ -84,23 +85,49 @@ func (s *Session) Router() *Router {
 
 // RPC sends message to remote server
 func (s *Session) RPC(route string, v interface{}) error {
-	return s.entity.RPC(route, v)
+	if err := s.entity.RPC(route, v); err != nil {
+		log.Error(err)
+		return err
+	}
+	return nil
+}
+
+// RPC sends same message to more than one remote server
+func (s *Session) RPCToMore(routes []string, v interface{}) error {
+	for _, route := range routes {
+		if err := s.RPC(route, v); err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 // Push message to client
 func (s *Session) Push(route string, v interface{}) error {
-	return s.entity.Push(route, v)
+	if err := s.entity.Push(route, v); err != nil {
+		log.Error(err)
+		return err
+	}
+	return nil
 }
 
 // Response message to client
 func (s *Session) Response(v interface{}) error {
-	return s.entity.Response(v)
+	if err := s.entity.Response(v); err != nil {
+		log.Error(err)
+		return err
+	}
+	return nil
 }
 
 // ResponseMID responses message to client, mid is
 // request message ID
 func (s *Session) ResponseMID(mid uint64, v interface{}) error {
-	return s.entity.ResponseMid(mid, v)
+	if err := s.entity.ResponseMid(mid, v); err != nil {
+		log.Error(err)
+		return err
+	}
+	return nil
 }
 
 // ID returns the session id

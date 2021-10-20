@@ -157,6 +157,7 @@ func (n *Node) initNode() error {
 		}
 		n.cluster.members = append(n.cluster.members, member)
 		n.cluster.setRpcClient(n.rpcClient)
+		n.cluster.liveMonitoring()
 	} else {
 		pool, err := n.rpcClient.getConnPool(n.AdvertiseAddr)
 		if err != nil {

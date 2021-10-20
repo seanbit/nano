@@ -3,6 +3,7 @@ package cluster
 import (
 	"context"
 	"github.com/seanbit/nano/cluster/clusterpb"
+	"github.com/seanbit/nano/internal/env"
 	"github.com/seanbit/nano/internal/log"
 	"github.com/seanbit/nano/internal/message"
 	"github.com/seanbit/nano/mock"
@@ -53,7 +54,9 @@ func (a *acceptor) RPC(route string, v interface{}) error {
 	if pipe := a.pipeline; pipe != nil {
 		err := pipe.Outbound().Process(a.session, msg)
 		if err != nil {
-			log.Println("broken pipeline", err.Error())
+			if env.Debug {
+				log.Debugln("broken pipeline", err.Error())
+			}
 			return err
 		}
 	}

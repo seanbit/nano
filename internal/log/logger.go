@@ -21,25 +21,60 @@
 package log
 
 import (
-	"log"
-	"os"
+	"github.com/sirupsen/logrus"
 )
 
 // Logger represents  the log interface
 type Logger interface {
-	Println(v ...interface{})
-	Fatal(v ...interface{})
-	Fatalf(format string, v ...interface{})
+	//Println(v ...interface{})
+	//Fatal(v ...interface{})
+	//Fatalf(format string, v ...interface{})
+
+	Debugf(format string, args ...interface{})
+	Infof(format string, args ...interface{})
+	Printf(format string, args ...interface{})
+	Errorf(format string, args ...interface{})
+	Fatalf(format string, args ...interface{})
+
+	Debug(args ...interface{})
+	Info(args ...interface{})
+	Print(args ...interface{})
+	Error(args ...interface{})
+	Fatal(args ...interface{})
+
+	Debugln(args ...interface{})
+	Infoln(args ...interface{})
+	Println(args ...interface{})
+	Errorln(args ...interface{})
+	Fatalln(args ...interface{})
 }
 
 func init() {
-	SetLogger(log.New(os.Stderr, "", log.LstdFlags|log.Lshortfile))
+	SetLogger(logrus.New())
 }
 
 var (
-	Println func(v ...interface{})
-	Fatal   func(v ...interface{})
-	Fatalf  func(format string, v ...interface{})
+	//Println func(v ...interface{})
+	//Fatal   func(v ...interface{})
+	//Fatalf  func(format string, v ...interface{})
+
+	Debugf func(format string, args ...interface{})
+	Infof func(format string, args ...interface{})
+	Printf func(format string, args ...interface{})
+	Errorf func(format string, args ...interface{})
+	Fatalf func(format string, args ...interface{})
+
+	Debug func(args ...interface{})
+	Info func(args ...interface{})
+	Print func(args ...interface{})
+	Error func(args ...interface{})
+	Fatal func(args ...interface{})
+
+	Debugln func(args ...interface{})
+	Infoln func(args ...interface{})
+	Println func(args ...interface{})
+	Errorln func(args ...interface{})
+	Fatalln func(args ...interface{})
 )
 
 // SetLogger rewrites the default logger
@@ -47,7 +82,25 @@ func SetLogger(logger Logger) {
 	if logger == nil {
 		return
 	}
-	Println = logger.Println
-	Fatal = logger.Fatal
+	//Println = logger.Println
+	//Fatal = logger.Fatal
+	//Fatalf = logger.Fatalf
+
+	Debugf = logger.Debugf
+	Infof = logger.Infof
+	Printf = logger.Printf
+	Errorf = logger.Errorf
 	Fatalf = logger.Fatalf
+
+	Debug = logger.Debug
+	Info = logger.Info
+	Print = logger.Print
+	Error = logger.Error
+	Fatal = logger.Fatal
+
+	Debugln = logger.Debugln
+	Infoln = logger.Infoln
+	Println = logger.Println
+	Errorln = logger.Errorln
+	Fatalln = logger.Fatalln
 }
