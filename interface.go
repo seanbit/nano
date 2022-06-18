@@ -130,3 +130,7 @@ func Listen(addr string, opts ...Option) {
 func Shutdown() {
 	close(env.Die)
 }
+
+func CurrentNode() *cluster.Node {
+	return runtime.CurrentNode
+}

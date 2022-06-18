@@ -23,6 +23,7 @@ package cluster
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"math/rand"
 	"net"
@@ -170,6 +171,46 @@ func (h *LocalHandler) RemoteService() []string {
 	}
 	sort.Strings(result)
 	return result
+}
+
+func (h *LocalHandler) RemoteNotify(router string, d interface{}) error {
+
+	index := strings.LastIndex(router, ".")
+	if index < 0 {
+		return errors.New(fmt.Sprintf("nano/handler: invalid route %s", router))
+	}
+
+	service := router[:index]
+	members := h.findMembers(service)
+	if len(members) == 0 {
+		return errors.New(fmt.Sprintf("nano/handler: %s not found(forgot registered?)", router))
+	}
+
+	var remoteAddr string
+	remoteAddr = members[rand.Intn(len(members))].ServiceAddr
+	pool, err := h.currentNode.rpcClient.getConnPool(remoteAddr)
+	if err != nil {
+		return err
+	}
+
+	data, err := message.Serialize(d)
+	if err != nil {
+		return err
+	}
+
+	gateAddr := h.currentNode.ServiceAddr
+	client := clusterpb.NewMemberClient(pool.Get())
+	request := &clusterpb.NotifyMessage{
+		GateAddr: gateAddr,
+		Route:    router,
+		Data:     data,
+	}
+	_, err = client.HandleNotify(context.Background(), request)
+	if err != nil {
+		return errors.New(fmt.Sprintf("Process remote message (%d:%s) error: %+v", time.Now().UnixNano(), router, err))
+	}
+
+	return nil
 }
 
 func (h *LocalHandler) handle(conn net.Conn) {
