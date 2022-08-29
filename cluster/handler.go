@@ -216,6 +216,7 @@ func (h *LocalHandler) RemoteNotify(router string, d interface{}) error {
 func (h *LocalHandler) handle(conn net.Conn) {
 	// create a client agent and startup write gorontine
 	agent := newAgent(conn, h.pipeline, h.remoteProcess)
+	agent.session.Set(scheduler.UserSchema, scheduler.NewUserScheduler(0))
 	h.currentNode.storeSession(agent.session)
 
 	// startup write goroutine
