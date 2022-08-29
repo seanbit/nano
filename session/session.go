@@ -23,6 +23,7 @@ package session
 import (
 	"errors"
 	"github.com/seanbit/nano/internal/log"
+	"github.com/seanbit/nano/scheduler"
 	"net"
 	"sync"
 	"sync/atomic"
@@ -159,6 +160,14 @@ func (s *Session) Bind(uid int64) error {
 // all related data should be Clear explicitly in Session closed callback
 func (s *Session) Close() {
 	s.entity.Close()
+	sched := s.Value(scheduler.UserSchema)
+	if sched != nil {
+		local, ok := sched.(scheduler.LocalScheduler)
+		if ok {
+			local.Close()
+		}
+	}
+
 }
 
 // RemoteAddr returns the remote network address.

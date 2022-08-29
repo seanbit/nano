@@ -38,6 +38,7 @@ const (
 // LocalScheduler schedules task to a customized goroutine
 type LocalScheduler interface {
 	Schedule(Task)
+	Close()
 }
 
 type Task func()
