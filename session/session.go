@@ -160,6 +160,10 @@ func (s *Session) Bind(uid int64) error {
 // all related data should be Clear explicitly in Session closed callback
 func (s *Session) Close() {
 	s.entity.Close()
+	s.CloseScheduler()
+}
+
+func (s *Session) CloseScheduler() {
 	sched := s.Value(scheduler.UserSchema)
 	if sched != nil {
 		local, ok := sched.(scheduler.LocalScheduler)
@@ -167,7 +171,6 @@ func (s *Session) Close() {
 			local.Close()
 		}
 	}
-
 }
 
 // RemoteAddr returns the remote network address.

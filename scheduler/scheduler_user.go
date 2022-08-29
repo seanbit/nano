@@ -38,7 +38,7 @@ func (us *UserScheduler) Close() {
 	}
 	close(us.chDie)
 	<-us.chExit
-	log.Println("Scheduler stopped")
+	log.Println("User Scheduler stopped")
 }
 
 func (us *UserScheduler) Sched() {
