@@ -5,11 +5,7 @@ import (
 	"sync/atomic"
 )
 
-const (
-	UserSchema = "UserScheduler"
-)
-
-type UserScheduler struct {
+type LocalScheduler struct {
 	chDie   chan struct{}
 	chExit  chan struct{}
 	chTasks chan Task
@@ -17,22 +13,24 @@ type UserScheduler struct {
 	closed  int32
 }
 
-func NewUserScheduler(cap int) *UserScheduler {
+func NewLocalScheduler(cap int) ILocalScheduler {
 	if cap <= 0 {
 		cap = messageQueueBacklog
 	}
-	return &UserScheduler{
+	scheduler := &LocalScheduler{
 		chDie:   make(chan struct{}),
 		chExit:  make(chan struct{}),
 		chTasks: make(chan Task, cap),
 	}
+	go scheduler.Scheduling()
+	return scheduler
 }
 
-func (us *UserScheduler) Schedule(task Task) {
+func (us *LocalScheduler) Schedule(task Task) {
 	us.chTasks <- task
 }
 
-func (us *UserScheduler) Close() {
+func (us *LocalScheduler) Close() {
 	if atomic.AddInt32(&us.closed, 1) != 1 {
 		return
 	}
@@ -41,7 +39,7 @@ func (us *UserScheduler) Close() {
 	log.Println("User Scheduler stopped")
 }
 
-func (us *UserScheduler) Sched() {
+func (us *LocalScheduler) Scheduling() {
 	if atomic.AddInt32(&us.started, 1) != 1 {
 		return
 	}

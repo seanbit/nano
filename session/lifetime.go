@@ -7,12 +7,29 @@ type (
 	LifetimeHandler func(*Session)
 
 	lifetime struct {
+		// callbacks that emitted on session create
+		onCreate []LifetimeHandler
 		// callbacks that emitted on session closed
 		onClosed []LifetimeHandler
 	}
 )
 
 var Lifetime = &lifetime{}
+
+// OnCreate set the Callback which will be called
+func (lt *lifetime) OnCreate(h LifetimeHandler) {
+	lt.onCreate = append(lt.onCreate, h)
+}
+
+func (lt *lifetime) Create(s *Session) {
+	if len(lt.onCreate) < 1 {
+		return
+	}
+
+	for _, h := range lt.onCreate {
+		h(s)
+	}
+}
 
 // OnClosed set the Callback which will be called
 // when session is closed Waring: session has closed.

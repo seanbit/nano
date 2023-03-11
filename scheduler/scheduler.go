@@ -35,8 +35,8 @@ const (
 	sessionCloseBacklog = 1 << 8
 )
 
-// LocalScheduler schedules task to a customized goroutine
-type LocalScheduler interface {
+// ILocalScheduler schedules task to a customized goroutine
+type ILocalScheduler interface {
 	Schedule(Task)
 	Close()
 }
@@ -62,7 +62,7 @@ func try(f func()) {
 	f()
 }
 
-func Sched() {
+func Scheduling() {
 	if atomic.AddInt32(&started, 1) != 1 {
 		return
 	}

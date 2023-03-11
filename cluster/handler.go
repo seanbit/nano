@@ -216,9 +216,7 @@ func (h *LocalHandler) RemoteNotify(router string, d interface{}) error {
 func (h *LocalHandler) handle(conn net.Conn) {
 	// create a client agent and startup write gorontine
 	agent := newAgent(conn, h.pipeline, h.remoteProcess)
-	us := scheduler.NewUserScheduler(0)
-	go us.Sched()
-	agent.session.Set(scheduler.UserSchema, us)
+	scheduler.PushTask(func() { session.Lifetime.Create(agent.session) })
 	h.currentNode.storeSession(agent.session)
 
 	// startup write goroutine
@@ -272,14 +270,6 @@ func (h *LocalHandler) handle(conn net.Conn) {
 		packets, err := agent.decoder.Decode(buf[:n])
 		if err != nil {
 			log.Println(err.Error())
-
-			// process packets decoded
-			for _, p := range packets {
-				if err := h.processPacket(agent, p); err != nil {
-					log.Println(err.Error())
-					return
-				}
-			}
 			return
 		}
 
@@ -493,13 +483,13 @@ func (h *LocalHandler) localProcess(handler *component.Handler, lastMid uint64, 
 	if s, found := h.localServices[service]; found && s.SchedName != "" {
 		sched := session.Value(s.SchedName)
 		if sched == nil {
-			log.Println(fmt.Sprintf("nanl/handler: cannot found `schedular.LocalScheduler` by %s", s.SchedName))
+			log.Println(fmt.Sprintf("nano/handler: cannot found `schedular.ILocalScheduler` by %s", s.SchedName))
 			return
 		}
 
-		local, ok := sched.(scheduler.LocalScheduler)
+		local, ok := sched.(scheduler.ILocalScheduler)
 		if !ok {
-			log.Println(fmt.Sprintf("nanl/handler: Type %T does not implement the `schedular.LocalScheduler` interface",
+			log.Println(fmt.Sprintf("nano/handler: Type %T does not implement the `schedular.ILocalScheduler` interface",
 				sched))
 			return
 		}

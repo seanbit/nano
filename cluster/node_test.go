@@ -4,13 +4,13 @@ import (
 	"strings"
 	"testing"
 
+	. "github.com/pingcap/check"
 	"github.com/seanbit/nano/benchmark/io"
 	"github.com/seanbit/nano/benchmark/testdata"
 	"github.com/seanbit/nano/cluster"
 	"github.com/seanbit/nano/component"
 	"github.com/seanbit/nano/scheduler"
 	"github.com/seanbit/nano/session"
-	. "github.com/pingcap/check"
 )
 
 type nodeSuite struct{}
@@ -48,7 +48,7 @@ func TestNode(t *testing.T) {
 }
 
 func (s *nodeSuite) TestNodeStartup(c *C) {
-	go scheduler.Sched()
+	go scheduler.Scheduling()
 	defer scheduler.Close()
 
 	masterComps := &component.Components{}
