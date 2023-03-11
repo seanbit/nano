@@ -22,6 +22,12 @@ func WithPipeline(pipeline pipeline.Pipeline) Option {
 	}
 }
 
+func WithInterceptor(interceptor cluster.Interceptor) Option {
+	return func(opt *cluster.Options) {
+		opt.Interceptor = interceptor
+	}
+}
+
 // WithAdvertiseAddr sets the advertise address option, it will be the listen address in
 // master node and an advertise address which cluster member to connect
 func WithAdvertiseAddr(addr string, retryInterval ...time.Duration) Option {

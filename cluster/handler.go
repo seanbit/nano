@@ -74,6 +74,8 @@ func cache() {
 	}
 }
 
+type Interceptor func(conn net.Conn) error
+
 type LocalHandler struct {
 	localServices map[string]*component.Service // all registered service
 	localHandlers map[string]*component.Handler // all handler method
@@ -82,15 +84,17 @@ type LocalHandler struct {
 	remoteServices map[string][]*clusterpb.MemberInfo
 
 	pipeline    pipeline.Pipeline
+	interceptor Interceptor
 	currentNode *Node
 }
 
-func NewHandler(currentNode *Node, pipeline pipeline.Pipeline) *LocalHandler {
+func NewHandler(currentNode *Node, pipeline pipeline.Pipeline, interceptor Interceptor) *LocalHandler {
 	h := &LocalHandler{
 		localServices:  make(map[string]*component.Service),
 		localHandlers:  make(map[string]*component.Handler),
 		remoteServices: map[string][]*clusterpb.MemberInfo{},
 		pipeline:       pipeline,
+		interceptor:    interceptor,
 		currentNode:    currentNode,
 	}
 
@@ -214,6 +218,12 @@ func (h *LocalHandler) RemoteNotify(router string, d interface{}) error {
 }
 
 func (h *LocalHandler) handle(conn net.Conn) {
+	if h.interceptor != nil {
+		if err := h.interceptor(conn); err != nil {
+			log.Infof("New Conn From:%s Intercept For: %s", conn.RemoteAddr(), err.Error())
+			return
+		}
+	}
 	// create a client agent and startup write gorontine
 	agent := newAgent(conn, h.pipeline, h.remoteProcess)
 	scheduler.PushTask(func() { session.Lifetime.Create(agent.session) })

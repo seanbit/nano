@@ -62,7 +62,7 @@ func NewService(comp Component, opts []Option) *Service {
 	} else {
 		s.Name = reflect.Indirect(s.Receiver).Type().Name()
 	}
-	s.SchedName = s.Options.schedName
+	s.SchedName = s.Options.schedulerName
 
 	return s
 }

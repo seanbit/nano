@@ -45,6 +45,7 @@ import (
 // Options contains some configurations for current node
 type Options struct {
 	Pipeline       pipeline.Pipeline
+	Interceptor    Interceptor
 	IsMaster       bool
 	AdvertiseAddr  string
 	RetryInterval  time.Duration
@@ -78,7 +79,7 @@ func (n *Node) Startup() error {
 	}
 	n.sessions = map[int64]*session.Session{}
 	n.cluster = newCluster(n)
-	n.handler = NewHandler(n, n.Pipeline)
+	n.handler = NewHandler(n, n.Pipeline, n.Interceptor)
 	components := n.Components.List()
 	for _, c := range components {
 		err := n.handler.register(c.Comp, c.Opts)
