@@ -115,7 +115,7 @@ func (a *agent) LastMid() uint64 {
 // Push, implementation for session.NetworkEntity interface
 func (a *agent) Push(route string, v interface{}) error {
 	if a.status() == statusClosed {
-		return ErrBrokenPipe
+		return nil
 	}
 
 	if len(a.chSend) >= agentWriteBacklog {
@@ -139,7 +139,7 @@ func (a *agent) Push(route string, v interface{}) error {
 // RPC, implementation for session.NetworkEntity interface
 func (a *agent) RPC(route string, v interface{}) error {
 	if a.status() == statusClosed {
-		return ErrBrokenPipe
+		return nil
 	}
 
 	// TODO: buffer
@@ -176,7 +176,7 @@ func (a *agent) Response(v interface{}) error {
 // Response message to session
 func (a *agent) ResponseMid(mid uint64, v interface{}) error {
 	if a.status() == statusClosed {
-		return ErrBrokenPipe
+		return nil
 	}
 
 	if mid <= 0 {

@@ -270,6 +270,11 @@ func (h *LocalHandler) handle(conn net.Conn) {
 	// read loop
 	buf := make([]byte, 2048)
 	for {
+		select {
+		case <-agent.chDie:
+			return
+		default:
+		}
 		n, err := conn.Read(buf)
 		if err != nil {
 			log.Println(fmt.Sprintf("Read message error: %s, session will be closed immediately", err.Error()))
@@ -294,6 +299,9 @@ func (h *LocalHandler) handle(conn net.Conn) {
 }
 
 func (h *LocalHandler) processPacket(agent *agent, p *packet.Packet) error {
+	if agent.status() == statusClosed {
+		return ErrBrokenPipe
+	}
 	switch p.Type {
 	case packet.Handshake:
 		if err := env.HandshakeValidator(p.Data); err != nil {
@@ -411,6 +419,9 @@ func (h *LocalHandler) remoteProcess(session *session.Session, msg *message.Mess
 }
 
 func (h *LocalHandler) processMessage(agent *agent, msg *message.Message) {
+	if agent.status() == statusClosed {
+		return
+	}
 	var lastMid uint64
 	switch msg.Type {
 	case message.Request:
