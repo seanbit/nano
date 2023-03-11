@@ -97,6 +97,10 @@ func newAgent(conn net.Conn, pipeline pipeline.Pipeline, rpcHandler rpcHandler) 
 	return a
 }
 
+func (a *agent) Closed() bool {
+	return a.state != statusClosed
+}
+
 func (a *agent) send(m pendingMessage) (err error) {
 	defer func() {
 		if e := recover(); e != nil {

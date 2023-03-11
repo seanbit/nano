@@ -22,6 +22,10 @@ type acceptor struct {
 	gateAddr   string
 }
 
+func (a *acceptor) Closed() bool {
+	return false
+}
+
 // Push implements the session.NetworkEntity interface
 func (a *acceptor) Push(route string, v interface{}) error {
 	// TODO: buffer

@@ -451,6 +451,9 @@ func (h *LocalHandler) handleWS(conn *websocket.Conn) {
 }
 
 func (h *LocalHandler) localProcess(handler *component.Handler, lastMid uint64, session *session.Session, msg *message.Message) {
+	if session.NetworkEntity().Closed() {
+		return
+	}
 	if pipe := h.pipeline; pipe != nil {
 		err := pipe.Inbound().Process(session, msg)
 		if err != nil {
