@@ -299,9 +299,6 @@ func (h *LocalHandler) handle(conn net.Conn) {
 }
 
 func (h *LocalHandler) processPacket(agent *agent, p *packet.Packet) error {
-	if agent.status() == statusClosed {
-		return ErrBrokenPipe
-	}
 	switch p.Type {
 	case packet.Handshake:
 		if err := env.HandshakeValidator(p.Data); err != nil {
@@ -328,7 +325,9 @@ func (h *LocalHandler) processPacket(agent *agent, p *packet.Packet) error {
 			return fmt.Errorf("receive data on socket which not yet ACK, session will be closed immediately, remote=%s",
 				agent.conn.RemoteAddr().String())
 		}
-
+		if agent.status() == statusClosed {
+			return ErrBrokenPipe
+		}
 		msg, err := message.Decode(p.Data)
 		if err != nil {
 			return err
